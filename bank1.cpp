@@ -110,8 +110,25 @@ class APP : public BANKMANAGEMENT{
         double water,electric;
         string Time[100];
 		int choice;
+		int idreciver;
 
         void RandomAccNumber();
+		void myAccount(double total_Balance_us,long total_Balance_kh);
+		void ManuDeposit();
+		void MenuWithdraw();
+		double Amount();
+		void TransferToOwnAcc();
+
+		void MenuPayment();
+		void PaymentWater();
+		void PaymentElectric();
+		void PaymentInternet();
+		void PaymentTv();
+		void PaymentOther();
+
+
+		void massageInfo(string TypAmt, string simbol,string currencySimb,string tsf,
+						 string riciver, string crAcc_dDt,string crAcc_rCv);
 
         // getter
 
@@ -122,24 +139,15 @@ class APP : public BANKMANAGEMENT{
             return Time[t] = asctime(&datetime);
             t++;
         }
-
-
-		double Amount();
-        void myAccount(double total_Balance_us,long total_Balance_kh);
-		void ManuDeposit();
-		void MenuWithdraw();
-		void MenuTransfer();
-		void MenuPayment();
-
-		void PaymentWater();
-		void PaymentElectric();
-		void PaymentInternet();
-		void PaymentTv();
-		void PaymentOther();
-
-		void massageInfo(string TypAmt, string simbol,string currencySimb,string tsf,
-						 string riciver, string crAcc_dDt,string crAcc_rCv);
-		void Atm();
+		string getAccNumber(){
+			return accountNumber;
+		}
+		long double getTotalBalncUS(){
+			return total_Balance_us;
+		}
+		long double getTotalBalancKH(){
+			return total_Balance_kh;
+		}
 
 };
 
@@ -161,7 +169,7 @@ class CUSTOMER : public STAFF {
         void dispayCustomer();
 };
  
-class RUNCODE {
+class RUNCODE : public CUSTOMER{
     private:
 
         STAFF staff[10];
@@ -206,6 +214,12 @@ class RUNCODE {
 
         void StaffLogin();
         void UserLogin(); 
+
+		
+		void TransferToOtherAcc();
+		void MenuTransfer();
+		
+		void Atm();
 
 };
 
@@ -325,7 +339,7 @@ void APP::myAccount(double total_Balance_us,long total_Balance_kh){
 }
 
 double APP::Amount(){
-	cout << "\n\t----------> Deoposit Account US <------------\n\n";
+	cout << "\n\t----------------------------------------\n\n";
 	cout << "Enter amount: ";
 	cin >> amount;
 	if(amount > 0){
@@ -370,48 +384,79 @@ void APP::MenuWithdraw(){
 	myAccount(total_Balance_us,total_Balance_kh);
 }
 
-void APP::MenuTransfer(){
+void RUNCODE::MenuTransfer(){
+	system("cls");
 	cout << "\n============== TRANSFER =============\n\n";
 	cout << "[1].TRANSFER TO OWN ACCOUNT\n\n";
 	cout << "[2].TRANSFER TO OTHER ACCOUNT\n\n";
 	cout << "Enter Choice: ";cin >> choice;
 	switch(choice){
 		case 1:
-			cout << "=============== Choose Account to Recive ================\n\n";
-			MenuCurrency();
-			cout << "Enter Choice: ";cin >> choice;
-			switch(choice){
-				case 1:
-					total_Balance_kh -= Amount();
-					total_Balance_us += (amount / 4000);
-					massageInfo("Transfer"," "," R","t","y"," (KH) "," (US) ");
-				break;
-				case 2:
-					total_Balance_us -= Amount();
-					total_Balance_kh += (amount * 4000);
-					massageInfo("Transfer"," "," $","t","y"," (US) "," (KH) ");
-				break;
-			}
-			myAccount(total_Balance_us,total_Balance_kh);
+			cout << "Enter your id: ";cin >> idSearch;
+				for(i = 0; i < n_Index_Customer; i++){
+					if(idSearch == custom[i].getId()){
+						custom[i].TransferToOwnAcc();
+						break;
+						isfound = 1;
+					}
+				}
+				if(isfound != 1){
+					cout << "Wrong Id Please try again!\n";
+				}
 		break;
 		case 2:	
-			MenuCurrency();
-			cout << "Enter Choice: ";cin >> choice;
-			switch(choice){
-				case 1:
-					cout << "Enter Acount: "; cin >> other_account;
-					total_Balance_us += other_account;
-					massageInfo("Transfer to Other"," "," $","t","y"," (US) "," (KH) ");
-				break;
-				case 2:
-					cout << "Enter Amount: "; cin >> other_account;
-					total_Balance_kh += other_account;
-					massageInfo("Transfer"," "," R","t","y"," (KH) "," (US) ");
-				break;
-			}
-			myAccount(total_Balance_us,total_Balance_kh);
+			TransferToOtherAcc();
 		break;
 	}
+}
+
+void APP::TransferToOwnAcc(){
+	cout << "=============== Choose Account to Recive ================\n\n";
+	MenuCurrency();
+	cout << "Enter Choice: ";cin >> choice;
+	switch(choice){
+		case 1:
+			total_Balance_kh -= Amount();
+			total_Balance_us += (amount / 4000);
+			massageInfo("Transfer"," "," R","t","y"," (KH) "," (US) ");
+		break;
+		case 2:
+			total_Balance_us -= Amount();
+			total_Balance_kh += (amount * 4000);
+			massageInfo("Transfer"," "," $","t","y"," (US) "," (KH) ");
+		break;
+	}
+	myAccount(total_Balance_us,total_Balance_kh);
+}
+
+void RUNCODE::TransferToOtherAcc(){
+	if(n_Index_Customer < 2){
+		cout << "Don't have any user!\n";
+	}else{
+		cout << "Enter Id account reciver: ";cin >> idreciver;
+			for(int i = 0; i < n_Index_Customer;i++){
+				if(idreciver == custom[i].getId()){
+					cout << "Account Name: " << custom[i].getName() << endl;
+					cout << "Account Number: " << custom[i].getAccNumber() << "\n\n";
+					cout << "Enter Acount: "; cin >> other_account;
+					MenuCurrency();
+					cout << "Enter Choice: ";cin >> choice;
+					switch(choice){
+						case 1:
+							total_Balance_us += other_account;
+							massageInfo("Transfer to Other"," "," $","t","y"," (US) "," (KH) ");
+						break;
+						case 2:
+							cout << "Enter Amount: "; cin >> other_account;
+							total_Balance_kh += other_account;
+							massageInfo("Transfer"," "," R","t","y"," (KH) "," (US) ");
+						break;
+					}
+					myAccount(total_Balance_us,total_Balance_kh);
+					break;
+				}
+			}
+		}
 }
 
 void APP::MenuPayment(){
@@ -563,32 +608,64 @@ void APP::massageInfo(  string TypAmt, // dps, wd, dedution , water, elec, inter
     cout << "\n\n___________________________________________________________________\n";
 }
 
-void APP::Atm(){
+void RUNCODE::Atm(){
 	do{
 		system("cls");
-		cout << "|\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/|\n";
+		cout << "|========================================================================|\n";
 		cout << "|/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\|\n\n";
+		cout << "|========================================================================|\n";
 		cout << "\n\n\t1 <=====  M-Y  A-C-C-O-U-N-T\n\n";
 		cout << "\t2 <=====  D-E-P-O-S-I-T\n\n";
 		cout << "\t3 <=====  W-I-T-H-D-R-A-W\n\n";
 		cout << "\t4 <=====  T-R-A-N-S-F-E-R-S\n\n";
 		cout << "\t5 <=====  P-A-Y-M-E-N-T\n\n";
 		cout << "\t0 <=====  B-A-C-K\n\n\n";
-		cout << "|\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/|\n";
+		cout << "|========================================================================|\n";
 		cout << "|/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\|\n";
+		cout << "|========================================================================|\n";
 		cout << "\n\nPlease choose option: ";
 		cin >> choice;
 		switch(choice){
 			case 1:
-				myAccount(total_Balance_us,total_Balance_kh);
+				cout << "Enter your id: ";cin >> idSearch;
+				for(i = 0; i <n_Index_Customer; i++){
+					if(idSearch == custom[i].getId()){
+						custom[i].myAccount(total_Balance_us,total_Balance_kh);
+						break;
+						isfound = 1;
+					}
+				}
+				if(isfound != 1){
+					cout << "Wrong Id Please try again!\n";
+				}
 				system("pause");
 			break;
 			case 2:
-				ManuDeposit();
+				cout << "Enter your id: ";cin >> idSearch;
+				for(i = 0; i < n_Index_Customer; i++){
+					if(idSearch == custom[i].getId()){
+						custom[i].ManuDeposit();
+						break;
+						isfound = 1;
+					}
+				}
+				if(isfound != 1){
+					cout << "Wrong Id Please try again!\n";
+				}
 				system("pause");
 			break;
 			case 3:
-				MenuWithdraw();
+				cout << "Enter your id: ";cin >> idSearch;
+				for(i = 0; i < n_Index_Customer; i++){
+					if(idSearch == custom[i].getId()){
+						custom[i].MenuWithdraw();
+						break;
+						isfound = 1;
+					}
+				}
+				if(isfound != 1){
+					cout << "Wrong Id Please try again!\n";
+				}
 				system("pause");
 			break;
 			case 4:
@@ -596,7 +673,17 @@ void APP::Atm(){
 				system("pause");
 			break;
 			case 5:
-				MenuPayment();
+				cout << "Enter your id: ";cin >> idSearch;
+					for(i = 0; i < n_Index_Customer; i++){
+						if(idSearch == custom[i].getId()){
+							custom[i].MenuPayment();
+							break;
+							isfound = 1;
+						}
+					}
+					if(isfound != 1){
+						cout << "Wrong Id Please try again!\n";
+					}
 				system("pause");
 			break;
 		}
@@ -1577,7 +1664,7 @@ void RUNCODE::UserLogin(){
 	for(i = 0; i < n_Index_Customer; i++){
 		if(usernameLog == custom[i].getUsername() && passwordLog == custom[i].getPasswrd()){
 			cout << "\nLogin Success!\n\n";
-			custom[i].Atm();
+			Atm();
 			isfound = 1;
 			break;
 		}
