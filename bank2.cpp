@@ -359,7 +359,6 @@ void RUNCODE::transtertoOtherAccRv(long double amount, char currency){
 		if(idSearch == custom[i].getId()){
 			cout << "Name           : " << custom[i].getName() << endl;
 			cout << "Account Number : " << custom[i].getAccNumber() << endl;
-			cout << "Amount's recive: " << amount << endl;
 			if(currency == 'U')
 				total_Balance_us += amount;
 			else if(currency == 'K')
@@ -495,7 +494,7 @@ void APP::PaymentOther(){
 	}
 	myAccount(total_Balance_us,total_Balance_kh);
 }
-void APP::massageInfo( string TypAmt, // dps, wd, dedution , water, elec, inter, tv, other
+void APP::massageInfo(  string TypAmt, // dps, wd, dedution , water, elec, inter, tv, other
                         string simbol, // +, -
                         string currencySimb,
                         string tsf,
@@ -525,28 +524,28 @@ void RUNCODE::Atm(){
 		cout << "Don't has any account in system!\n";
 		cout << "Please create account first!!!\n";
 	}else{
-		do{
-			system("cls");
-			cout << "++=====================================================++\n";
-			cout << "||                     USER LOGIN                      ||\n";
-			cout << "++=====================================================++\n\n";
-			cout << "Enter Username: "; cin >> usernameLog;
-			cout << "\nEnter Password: "; cin >> passwordLog;
-			for(i = 0; i < n_Index_Customer; i++){
-				if(usernameLog == custom[i].getUsername() && passwordLog == custom[i].getPasswrd()){
+		cout << "++=====================================================++\n";
+		cout << "||                     USER LOGIN                     ||\n";
+		cout << "++=====================================================++\n\n";
+		cout << "Enter Username: "; cin >> usernameLog;
+		cout << "\nEnter Password: "; cin >> passwordLog;
+		for(i = 0; i < n_Index_Customer; i++){
+			if(usernameLog == custom[i].getUsername() && passwordLog == custom[i].getPasswrd()){
+				cout << "\nLogin Success!\n\n";
+				do{
 					system("cls");
-					cout << "|================================================|\n";
+					cout << "|========================================================|\n";
 					cout << "|/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\|\n";
-					cout << "|================================================|\n";
+					cout << "|========================================================|\n";
 					cout << "\n\n\t1 <=====  M-Y  A-C-C-O-U-N-T\n\n";
 					cout << "\t2 <=====  D-E-P-O-S-I-T\n\n";
 					cout << "\t3 <=====  W-I-T-H-D-R-A-W\n\n";
 					cout << "\t4 <=====  T-R-A-N-S-F-E-R-S\n\n";
 					cout << "\t5 <=====  P-A-Y-M-E-N-T\n\n";
 					cout << "\t0 <=====  B-A-C-K\n\n\n";
-					cout << "|================================================|\n";
+					cout << "|========================================================|\n";
 					cout << "|/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\|\n";
-					cout << "|================================================|\n";
+					cout << "|========================================================|\n";
 					cout << "\n\nPlease choose option: ";
 					cin >> choice;
 					switch(choice){
@@ -593,7 +592,6 @@ void RUNCODE::Atm(){
 											break;
 										}
 										custom[i].myAccount(total_Balance_us,total_Balance_kh);
-										system("pause");
 									break;
 									}
 								}
@@ -604,11 +602,11 @@ void RUNCODE::Atm(){
 							system("pause");
 						break;
 					}
+				}while(choice != 0) ;
 				isfound = 1;
 				break;
-				}
-			}if(!isfound){cout << "\n\nInvalid Username or Password Please try again!\n";}
-		}while(choice != 0) ;
+			}
+		}if(!isfound){cout << "\n\nInvalid Username or Password Please try again!\n";}
 	}
 	system("pause");
 }
