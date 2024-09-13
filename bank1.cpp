@@ -86,6 +86,7 @@ class APP : public BANKMANAGEMENT{
 		void ManuDeposit();
 		void MenuWithdraw();
 		void MenuTransferOwnAcc();
+		void TfOther(char currency);
 		void TranserOtherOwnAcc(long double amTf, char ccTf);
 		void MenuPayment();
 
@@ -164,7 +165,6 @@ class RUNCODE : public CUSTOMER{
 		void UpdateAccoutnCustomer();
 		void DeleteAccounttCustomer();
 		
-		void transtertoOtherAccRv(long double amount, char currency);
 		void Atm();
 
         void StaffLogin();
@@ -332,6 +332,16 @@ void APP::TranserOtherOwnAcc(long double amTf, char ccTf){
 	else if(ccTf == 'K')
 		total_Balance_kh -= other_account;
 }
+void APP::TfOther(char currency){
+	cout << "Name           : " << name << endl;
+	cout << "Account Number : " << accountNumber << endl;
+	cout << "Amount's recive: " << amount << endl;
+	if(currency == 'U')
+		total_Balance_us += amount;
+	else if(currency == 'K')
+		total_Balance_kh += amount;
+
+}
 void APP::MenuTransferOwnAcc(){
 	cout << "=============== Choose Account to Recive ================\n\n";
 	MenuCurrency();
@@ -351,32 +361,6 @@ void APP::MenuTransferOwnAcc(){
 	myAccount(total_Balance_us,total_Balance_kh);
 }
 
-void RUNCODE::transtertoOtherAccRv(long double amount, char currency){
-	again:
-	system("cls");
-	cout << "Enter Id's riciver: "; cin >> idSearch;
-	for(i = 0; i < n_Index_Customer; i++){
-		if(idSearch == custom[i].getId()){
-			cout << "Name           : " << custom[i].getName() << endl;
-			cout << "Account Number : " << custom[i].getAccNumber() << endl;
-			cout << "Amount's recive: " << amount << endl;
-			if(currency == 'U')
-				total_Balance_us += amount;
-			else if(currency == 'K')
-				total_Balance_kh += amount;
-			isfound = 1;
-			cout << "Transfer success!\n";
-			break;
-		}
-	}
-	if(isfound != 1){
-		cout << "The id [ " << idSearch <<" ] incorrect!\n";
-		cout << "Do you want search again (Y or press any key): "; cin >> tsf;
-		if(tsf == 'Y')
-			goto again;
-	}
-	system("pause");
-}
 
 void APP::MenuPayment(){
 	cout << "\t                                                   +---------+\n";
@@ -551,14 +535,17 @@ void RUNCODE::Atm(){
 					cin >> choice;
 					switch(choice){
 						case 1:
+							system("cls");
 							custom[i].myAccount(total_Balance_us,total_Balance_kh);
 							system("pause");
 						break;
 						case 2:
+							system("cls");
 							custom[i].ManuDeposit();
 							system("pause");
 						break;
 						case 3:
+							system("cls");
 							custom[i].MenuWithdraw();
 							system("pause");
 						break;
@@ -582,13 +569,47 @@ void RUNCODE::Atm(){
 											case 1:
 												cout << "Enter Acount: "; cin >> other_account;
 												custom[i].TranserOtherOwnAcc(other_account, 'U');
-												transtertoOtherAccRv(other_account, 'U');
+												again1:
+												system("cls");
+												cout << "Enter Id's riciver: "; cin >> idSearch;
+												for(int j = 0; j < n_Index_Customer; j++){
+													if(idSearch == custom[j].getId()){
+														custom[j].TfOther('U');
+														isfound = 1;
+														cout << "Transfer success!\n";
+														break;
+													}
+												}
+												if(isfound != 1){
+													cout << "The id [ " << idSearch <<" ] incorrect!\n";
+													cout << "Do you want search again (Y or press any key): "; cin >> tsf;
+													if(tsf == 'Y')
+														goto again1;
+												}
+												system("pause");
 												massageInfo("Transfer to Other"," "," $","t","y"," (US) "," (KH) ");
 											break;
 											case 2:
 												cout << "Enter Amount: "; cin >> other_account;
 												custom[i].TranserOtherOwnAcc(other_account, 'K');
-												transtertoOtherAccRv(other_account, 'K');
+												again2:
+												system("cls");
+												cout << "Enter Id's riciver: "; cin >> idSearch;
+												for(int j = 0; j < n_Index_Customer; j++){
+													if(idSearch == custom[j].getId()){
+														custom[j].TfOther('K');
+														isfound = 1;
+														cout << "Transfer success!\n";
+														break;
+													}
+												}
+												if(isfound != 1){
+													cout << "The id [ " << idSearch <<" ] incorrect!\n";
+													cout << "Do you want search again (Y or press any key): "; cin >> tsf;
+													if(tsf == 'Y')
+														goto again2;
+												}
+												system("pause");
 												massageInfo("Transfer"," "," R","t","y"," (KH) "," (US) ");
 											break;
 										}
@@ -612,7 +633,7 @@ void RUNCODE::Atm(){
 	}
 	system("pause");
 }
-
+ 
 
 // STAFF
 
@@ -1558,7 +1579,6 @@ void RUNCODE::StaffLogin(){
 		}
 		system("pause");
 }
-
 
 int main(){
 	RUNCODE();
